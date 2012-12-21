@@ -1,4 +1,4 @@
-appaloosa-android-sdk
+SDK Appaloosa Android
 =====================
 
 Main features of Appaloosa SDK
@@ -19,7 +19,7 @@ If you use maven or any other tool with dependency management, add the following
 
 Since the component is not on maven central, you will need to install the dependency first:
 
-mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0 -Dpackaging=jar
+    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0 -Dpackaging=jar
 
 If you don't use maven, simply add the appaloosa-sdk-1.0-jar-with-dependencies.jar to your libs folder.
 
@@ -39,6 +39,10 @@ You also need the following permisions (network state and internet to request Ap
 Then you only need the following line in your code:
 
      Appaloosa.getInstance().autoUpdate(this, STORE_ID, STORE_TOKEN);
+     
+STORE_ID and STORE_TOKEN can be found in the Appaloosa console (in settings section).
+
+If you want to go further, you can watch the sdk-test subproject to have 3 samples.
 
 License
 -------
