@@ -42,6 +42,14 @@ Then you only need the following line in your code:
      
 STORE_ID and STORE_TOKEN can be found in the Appaloosa console (in settings section).
 
+Follow the settings link
+
+![Settings link](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-settings-link.png)
+
+STORE_ID and STORE_TOKEN are located at the bottom of this page
+
+![store toek and store id](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-token-and-id.png)
+
 If you want to go further, you can watch the sdk-test subproject to have 3 samples.
 
 License
