@@ -3,6 +3,7 @@ package com.octo.appaloosasdk.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -227,6 +228,7 @@ public class SystemUtils {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         displayMetricsDataList.add(new ConfigProperty("Screen density ", String.valueOf(metrics.density)));
         displayMetricsDataList.add(new ConfigProperty("DPI Screen density", String.valueOf(metrics.densityDpi)));
+        displayMetricsDataList.add(new ConfigProperty("Screen dimensions", metrics.widthPixels + " x " + metrics.heightPixels));
         return displayMetricsDataList;
 	}
 	
@@ -239,6 +241,9 @@ public class SystemUtils {
 	 */
 	public static List<ConfigProperty> getGeneralConfigPropertyList(Context context) {
 		List<ConfigProperty> generalDataList = new ArrayList<ConfigProperty>();
+		String device = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+		device = device.substring(0, 1).toUpperCase(Locale.getDefault()) + device.substring(1);
+		generalDataList.add(new ConfigProperty("Device Model", device));
 		generalDataList.add(new ConfigProperty("OS version", android.os.Build.VERSION.RELEASE));
 		generalDataList.add(new ConfigProperty("Android API level", String.valueOf(android.os.Build.VERSION.SDK_INT)));
 		return generalDataList;
