@@ -36,6 +36,7 @@ import com.octo.appaloosasdk.exception.ApplicationInstallException;
 import com.octo.appaloosasdk.model.Application;
 import com.octo.appaloosasdk.model.DownloadUrl;
 import com.octo.appaloosasdk.model.UpdateStatus;
+import com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity;
 import com.octo.appaloosasdk.utils.SystemUtils;
 
 /**
@@ -447,12 +448,24 @@ public class Appaloosa {
 
 		mUpdateStatus = UpdateStatus.DOWNLOADING;
 		BigBinaryRequest downloadRequest = new BigBinaryRequest(URL, new File(context.getCacheDir(), "temp_binary_" + storeId + "_" + applicationId));
-		mSpiceManager.execute(downloadRequest, APK_BINARY_KEY, DurationInMillis.NEVER, listener);
+		mSpiceManager.execute(downloadRequest, APK_BINARY_KEY, DurationInMillis.ALWAYS_EXPIRED, listener);
 
 	}
 
 	private synchronized void updateListener(ApplicationUpdateListener listener) {
 		mApplicationUpdateListener = listener;
+	}
+	
+	/**
+	 * This method launched an activity displaying system and application information 
+	 * (OS, screen, package, requested permissions, signatures, permissions, and services information)
+	 * 
+	 * @param context
+	 *            {@link Context} of the application
+	 */
+	public void displayDevPanel(Context context) {
+		Intent intent = new Intent(context, AppaloosaDevPanelActivity.class);
+		context.startActivity(intent);
 	}
 
 }

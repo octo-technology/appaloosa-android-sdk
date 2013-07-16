@@ -11,11 +11,13 @@ import org.springframework.web.client.RestTemplate;
 
 import android.app.Application;
 import android.app.Service;
+import android.util.Log;
 
 import com.octo.android.robospice.SpringAndroidSpiceService;
 import com.octo.android.robospice.persistence.CacheManager;
 import com.octo.android.robospice.persistence.binary.InFileBigInputStreamObjectPersister;
-import com.octo.android.robospice.persistence.json.jackson.JacksonObjectPersisterFactory;
+import com.octo.android.robospice.persistence.exception.CacheCreationException;
+import com.octo.android.robospice.persistence.springandroid.json.jackson.JacksonObjectPersisterFactory;
 
 /**
  * Robospice {@link Service} used to call remote web services with Spring Android<br/>
@@ -26,6 +28,8 @@ import com.octo.android.robospice.persistence.json.jackson.JacksonObjectPersiste
  */
 public class AppaloosaSpiceService extends SpringAndroidSpiceService {
 
+	private static final String TAG_APPALOOSA = "APPALOOSA";
+	
 	/** Timeout when calling a web service (in ms). */
 	private static final int WEBSERVICES_TIMEOUT = 30000;
 
@@ -56,12 +60,26 @@ public class AppaloosaSpiceService extends SpringAndroidSpiceService {
 	public CacheManager createCacheManager(Application application) {
 		CacheManager cacheManager = new CacheManager();
 
-		JacksonObjectPersisterFactory inJSonFileObjectPersisterFactory = new JacksonObjectPersisterFactory(application);
-		inJSonFileObjectPersisterFactory.setAsyncSaveEnabled(true);
-		cacheManager.addPersister(inJSonFileObjectPersisterFactory);
+		JacksonObjectPersisterFactory inJSonFileObjectPersisterFactory;
+		try {
+			inJSonFileObjectPersisterFactory = new JacksonObjectPersisterFactory(application);
+			inJSonFileObjectPersisterFactory.setAsyncSaveEnabled(true);
+			cacheManager.addPersister(inJSonFileObjectPersisterFactory);
+		} catch (CacheCreationException e) {
+			String error = "Unable to create cacheManager";
+			Log.e(TAG_APPALOOSA, error);
+			e.printStackTrace();
+		}
 
-		InFileBigInputStreamObjectPersister inFileInputStreamObjectPersister = new InFileBigInputStreamObjectPersister(application);
-		cacheManager.addPersister(inFileInputStreamObjectPersister);
+		try {
+			InFileBigInputStreamObjectPersister inFileInputStreamObjectPersister;
+			inFileInputStreamObjectPersister = new InFileBigInputStreamObjectPersister(application);
+			cacheManager.addPersister(inFileInputStreamObjectPersister);
+		} catch (CacheCreationException e) {
+			String error = "Unable to create cacheManager";
+			Log.e(TAG_APPALOOSA, error);
+			e.printStackTrace();
+		}
 
 		return cacheManager;
 	}

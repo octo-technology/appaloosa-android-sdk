@@ -5,26 +5,30 @@ Main features of Appaloosa SDK
 ------------------------------
 
 * Application auto-update: check if the application is up to date and install the latest version if not
+* Application developer-panel: display a screen with information about the device and the application.
 
 Installation
 ------------
 
 If you use maven or any other tool with dependency management, add the following dependency :
 
-      <dependency>
-          <groupId>com.octo.android.appaloosa</groupId>
+       <dependency>
+		<groupId>com.octo.android.appaloosa</groupId>
 	        <artifactId>appaloosa-sdk</artifactId>
 	        <version>1.0</version>
-	    </dependency>
+		<type>apklib</type>
+	</dependency>
 
 Since the component is not on maven central, you will need to install the dependency first:
 
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0 -Dpackaging=jar
+    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0.0 -Dpackaging=apklib
 
 If you don't use maven, simply add the appaloosa-sdk-1.0-jar-with-dependencies.jar to your libs folder.
 
 Usage
 -----
+
+### Auto-update
 
 In all cases, you need to configure a service in your AndroidManifest.xml in order to request the Appaloosa server asynchronously:
 
@@ -51,6 +55,20 @@ STORE_ID and STORE_TOKEN are located at the bottom of this page
 ![store toek and store id](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-token-and-id.png)
 
 If you want to go further, you can watch the sdk-test subproject to have 3 samples.
+
+### Developer panel
+
+The developer panel gives information about the device and the application.
+
+![Settings link](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-dev-panel-1.png)
+
+You need to add the following activity in your AndroidManifest.xml :
+
+    <activity android:name="com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity" android:exported="false" />
+
+Then you only need the following line in your code:
+
+    Appaloosa.getInstance().displayDevPanel(this); 
 
 License
 -------

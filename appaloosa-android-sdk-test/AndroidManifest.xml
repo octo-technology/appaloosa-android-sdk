@@ -37,13 +37,26 @@
             -->
         </activity>
         <activity android:name=".activity.ManualActivity" >
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+        <activity android:name=".activity.DevPanelActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        
+        <activity
+            android:name="com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity"
+            android:exported="false" />
+        
         <service
             android:name="com.octo.appaloosasdk.async.AppaloosaSpiceService"
             android:exported="false" />
