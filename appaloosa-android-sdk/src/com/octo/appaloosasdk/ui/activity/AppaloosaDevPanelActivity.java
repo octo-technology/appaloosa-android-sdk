@@ -53,6 +53,12 @@ public class AppaloosaDevPanelActivity extends Activity {
 		configItems.add(new ConfigPropertyHeaderItemView("System"));
 		this.fillPropertyList(configItems, SystemUtils.getGeneralConfigPropertyList(this), false);
 		
+		configItems.add(new ConfigPropertyHeaderItemView("External Storage"));
+		this.fillPropertyList(configItems, SystemUtils.getExternalStorageConfigPropertyList(), false);
+		
+		configItems.add(new ConfigPropertyHeaderItemView("Internal Storage"));
+		this.fillPropertyList(configItems, SystemUtils.getInternalStorageConfigPropertyList(), false);
+		
 		configItems.add(new ConfigPropertyHeaderItemView("Screen"));
 		this.fillPropertyList(configItems, SystemUtils.getDisplayMetricsDataList(this), false);
 

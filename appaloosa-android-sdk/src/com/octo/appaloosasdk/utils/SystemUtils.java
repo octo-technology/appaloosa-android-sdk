@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -13,6 +15,7 @@ import android.content.pm.ServiceInfo;
 import android.content.pm.Signature;
 import android.net.ConnectivityManager;
 import android.os.Environment;
+import android.os.StatFs;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 
@@ -233,7 +236,7 @@ public class SystemUtils {
 	}
 	
 	/**
-	 * Return a list of general app info
+	 * Return a list of general app information
 	 * 
 	 * 
 	 * @param Context
@@ -241,12 +244,72 @@ public class SystemUtils {
 	 */
 	public static List<ConfigProperty> getGeneralConfigPropertyList(Context context) {
 		List<ConfigProperty> generalDataList = new ArrayList<ConfigProperty>();
+		
 		String device = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
 		device = device.substring(0, 1).toUpperCase(Locale.getDefault()) + device.substring(1);
 		generalDataList.add(new ConfigProperty("Device Model", device));
+		
 		generalDataList.add(new ConfigProperty("OS version", android.os.Build.VERSION.RELEASE));
 		generalDataList.add(new ConfigProperty("Android API level", String.valueOf(android.os.Build.VERSION.SDK_INT)));
+
+		long ramSize = getRamSizeAvailable(context);
+		generalDataList.add(new ConfigProperty("Available RAM size", ramSize == 0 ? "unknown" : "~ " + ramSize + " Mb"));
+		
 		return generalDataList;
 	}
-
+	
+	private static long getRamSizeAvailable(Context context) {
+		long ramSize = 0;
+		ActivityManager actManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+		actManager.getMemoryInfo(memInfo);
+		ramSize = memInfo.availMem / (1024 * 1024);
+		return ramSize;
+	}
+	
+	/**
+	 * Return a list of config property about external storage
+	 * 
+	 * 
+	 * @return list of ConfigProperty
+	 */
+	public static List<ConfigProperty> getExternalStorageConfigPropertyList() {
+		List<ConfigProperty> storageDataList = new ArrayList<ConfigProperty>();		
+		String state = Environment.getExternalStorageState();
+		
+		if (!Environment.MEDIA_MOUNTED.equals(state) && !Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+			return storageDataList;
+		}
+		
+		String storagePath = Environment.getExternalStorageDirectory().getPath();
+		StatFs stat = new StatFs(storagePath);
+		long mbAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks() / (1024 * 1024);
+		long mbTotal = (long)stat.getBlockSize() * (long)stat.getBlockCount() / (1024 * 1024);
+		
+		storageDataList.add(new ConfigProperty("Directory path", storagePath));
+		storageDataList.add(new ConfigProperty("Free", mbAvailable + " Mb"));
+		storageDataList.add(new ConfigProperty("Total", mbTotal + " Mb"));
+		
+		return storageDataList;
+	}
+	
+	/**
+	 * Return a list of config property about internal storage
+	 * 
+	 * 
+	 * @return list of ConfigProperty
+	 */
+	public static List<ConfigProperty> getInternalStorageConfigPropertyList() {
+		List<ConfigProperty> storageDataList = new ArrayList<ConfigProperty>();
+		
+		String storagePath = Environment.getDataDirectory().getPath();
+		StatFs stat = new StatFs(storagePath);
+		long mbAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks() / (1024 * 1024);
+		long mbTotal = (long)stat.getBlockSize() * (long)stat.getBlockCount() / (1024 * 1024);
+		
+		storageDataList.add(new ConfigProperty("Directory path", storagePath));
+		storageDataList.add(new ConfigProperty("Free", mbAvailable + " Mb"));
+		storageDataList.add(new ConfigProperty("Total", mbTotal + " Mb"));
+		return storageDataList;
+	}
 }
