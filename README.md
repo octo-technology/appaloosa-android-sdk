@@ -23,7 +23,7 @@ Since the component is not on maven central, you will need to install the depend
 
     mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0.0 -Dpackaging=apklib
 
-If you don't use maven, simply add the appaloosa-sdk-1.0-jar-with-dependencies.jar to your libs folder.
+If you don't use maven, simply add the sdk as a library reference in your project properties.
 
 Usage
 -----
