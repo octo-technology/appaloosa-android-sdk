@@ -60,7 +60,7 @@ If you want to go further, you can watch the sdk-test subproject to have 3 sampl
 
 The developer panel gives information about the device and the application.
 
-![Settings link](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-dev-panel-1.png)
+![appaloosa dev panel screenshot](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-dev-panel-1.png)
 
 You need to add the following activity in your AndroidManifest.xml :
 
