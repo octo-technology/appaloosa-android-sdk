@@ -50,7 +50,7 @@ public class AppaloosaDevPanelActivity extends Activity {
 	        e.printStackTrace();
 	    }
 		
-		configItems.add(new ConfigPropertyHeaderItemView("OS"));
+		configItems.add(new ConfigPropertyHeaderItemView("System"));
 		this.fillPropertyList(configItems, SystemUtils.getGeneralConfigPropertyList(this), false);
 		
 		configItems.add(new ConfigPropertyHeaderItemView("Screen"));
