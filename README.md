@@ -1,7 +1,7 @@
 SDK Appaloosa Android
 =====================
 
-For android 2.1+
+For android 2.2+
 
 Main features of Appaloosa SDK
 ------------------------------
