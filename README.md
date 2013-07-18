@@ -1,6 +1,8 @@
 SDK Appaloosa Android
 =====================
 
+Support android
+
 Main features of Appaloosa SDK
 ------------------------------
 
@@ -40,7 +42,7 @@ Here is the list of library dependency :
  - spring-android-core (1.0.1)
  - jackson-mapper-asl (1.9.11)
  - jackson-core-asl (1.9.11)
- - support-v4-r7 ==> Warning : If you need to use a newer version (eg: r13), you need exclude this one.
+ - support-v4-r7 ==> Warning : If you need to use a newer version (eg: r13), you need to exclude this one.
 
 Usage
 -----
