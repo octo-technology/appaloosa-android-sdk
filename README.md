@@ -17,15 +17,15 @@ Installation
 If you use maven or any other tool with dependency management, add the following dependency :
 
        <dependency>
-		<groupId>com.octo.android.appaloosa</groupId>
-	        <artifactId>appaloosa-sdk</artifactId>
+		<groupId>com.appaloosa-store</groupId>
+	        <artifactId>appaloosa-android-sdk</artifactId>
 	        <version>1.0</version>
 		<type>apklib</type>
 	</dependency>
 
 Since the component is not on maven central, you will need to install the dependency first:
 
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.octo.android.appaloosa -DartifactId=appaloosa-sdk -Dversion=1.0.0 -Dpackaging=apklib
+    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.appaloosa-store -DartifactId=appaloosa-sdk -Dversion=1.0.0 -Dpackaging=apklib
 
 ### Non Maven way
 
