@@ -3,11 +3,32 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.octo.android.appaloosa</groupId>
-	<artifactId>appaloosa-sdk</artifactId>
+	<groupId>com.appaloosa-store</groupId>
+	<artifactId>appaloosa-android-sdk</artifactId>
 	<packaging>apklib</packaging>
 	<name>Appaloosa - SDK</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
+    <description>Android SDK for appaloosa-store</description>
+    <url>http://appaloosa-store.com</url>
+    <licenses>
+		<license>
+	    	<name>The Apache Software License, Version 2.0</name>
+	      	<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	      	<distribution>repo</distribution>
+    	</license>
+  	</licenses>
+    <scm>
+		<url>https://github.com/octo-online/appaloosa-android-sdk</url>
+        <connection>scm:git:https://github.com/octo-online/appaloosa-android-sdk</connection>
+	</scm>
+    <developers>
+		<developer>
+	    	<id>mreda</id>
+	      	<name>Reda Mahmoud</name>
+	      	<email>mmm@octo.com</email>
+	    </developer>
+    </developers>
+	
 
 	<prerequisites>
 		<maven>3.0.3</maven>
