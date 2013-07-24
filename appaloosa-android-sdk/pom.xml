@@ -62,17 +62,17 @@
 	<distributionManagement>
 		<!-- Publish versioned releases here -->
 		<repository>
-			<id>octo</id>
-			<name>OCTO Realeases</name>
-			<url>https://projets.octo.com/nexus/content/repositories/releases</url>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Realeases</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 
 
 		<!-- Publish snapshots here -->
 		<snapshotRepository>
-			<id>octo</id>
-			<name>OCTO Snapshots</name>
-			<url>https://projets.octo.com/nexus/content/repositories/snapshots</url>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
