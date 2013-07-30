@@ -24,8 +24,9 @@
     	</license>
   	</licenses>
     <scm>
-		<url>https://github.com/octo-online/appaloosa-android-sdk</url>
-        <connection>scm:git:https://github.com/octo-online/appaloosa-android-sdk</connection>
+        <connection>scm:git:git@github.com:octo-online/appaloosa-android-sdk.git</connection>
+	    <developerConnection>scm:git:git@github.com:octo-online/appaloosa-android-sdk.git</developerConnection>
+		<url>git@github.com:octo-online/appaloosa-android-sdk.git</url>
 	</scm>
     <developers>
 		<developer>
