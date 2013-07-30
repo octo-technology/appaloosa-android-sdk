@@ -19,7 +19,7 @@ If you use maven or any other tool with dependency management, add the following
        <dependency>
 		<groupId>com.appaloosa-store</groupId>
 	        <artifactId>appaloosa-android-sdk</artifactId>
-	        <version>1.0</version>
+	        <version>1.0.0</version>
 		<type>apklib</type>
 	</dependency>
 
@@ -88,6 +88,11 @@ You need to add the following activity in your AndroidManifest.xml :
 Then you only need the following line in your code:
 
     Appaloosa.getInstance().displayDevPanel(this); 
+
+Sample
+------
+
+A sample app using this sdk is available here : https://github.com/octo-online/appaloosa-android-sdk-sample
 
 License
 -------
