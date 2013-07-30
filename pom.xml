@@ -160,21 +160,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.15</version>
 			</plugin>
-			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-release-plugin</artifactId>
-			    <executions>
-			        <execution>
-			            <id>default</id>
-			            <goals>
-			                <goal>perform</goal>
-			            </goals>
-			            <configuration>
-			                <pomFileName>appaloosa-android-sdk/pom.xml</pomFileName>
-			            </configuration>
-			        </execution>
-			    </executions>
-			</plugin>
 		</plugins>
 	</build>
 
