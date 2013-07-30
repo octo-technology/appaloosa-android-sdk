@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Environment;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.octo.android.robospice.SpiceManager;
@@ -23,17 +25,22 @@ import com.octo.android.robospice.request.listener.RequestProgress;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.request.simple.BigBinaryRequest;
 import com.octo.appaloosasdk.async.AppaloosaSpiceService;
+import com.octo.appaloosasdk.async.listeners.ApplicationAuthorizationRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationDownloadRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationInformationRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpToDateListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpdateListener;
+import com.octo.appaloosasdk.async.requests.ApplicationAuthorizationRequest;
 import com.octo.appaloosasdk.async.requests.ApplicationBinaryUrlRequest;
 import com.octo.appaloosasdk.async.requests.ApplicationInformationRequest;
 import com.octo.appaloosasdk.exception.AppaloosaException;
 import com.octo.appaloosasdk.exception.ApplicationDownloadException;
 import com.octo.appaloosasdk.exception.ApplicationInformationException;
 import com.octo.appaloosasdk.exception.ApplicationInstallException;
+import com.octo.appaloosasdk.listener.ApplicationAuthorizationListener;
+import com.octo.appaloosasdk.listener.DefaultApplicationAuthorizationListener;
 import com.octo.appaloosasdk.model.Application;
+import com.octo.appaloosasdk.model.ApplicationAuthorization;
 import com.octo.appaloosasdk.model.DownloadUrl;
 import com.octo.appaloosasdk.model.UpdateStatus;
 import com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity;
@@ -44,7 +51,7 @@ import com.octo.appaloosasdk.utils.SystemUtils;
  * To use this SDK, it is necessary to have an account on <a href="http://appaloosa-store.com">http://appaloosa-store.com</a>. <br />
  * On the administration console, in store settings (http://appaloosa-store.com/2012-mystore/store_settings), the <b>store token</b> and <b>store id</b> wil be necessary to use the SDK.
  * 
- * @author Jerome Van Der Linden
+ * @author Jerome Van Der Linden & Christopher Parola
  * 
  */
 public class Appaloosa {
@@ -56,6 +63,11 @@ public class Appaloosa {
 
 	private UpdateStatus mUpdateStatus;
 	private SpiceManager mSpiceManager;
+	
+	private Activity activity;
+	private long storeId;
+	private String storeToken;
+	private ApplicationAuthorizationListener listener;
 
 	// Listeners (keep in field for next time called)
 	private ApplicationUpdateListener mApplicationUpdateListener;
@@ -353,6 +365,68 @@ public class Appaloosa {
 			// close the application, otherwise, the installation may fail (if start activitity is not the same as previous for example)
 			System.exit(0);
 		}
+	}
+	
+	/**
+	 * Check authorisations
+	 * @param storeId
+	 * @param applicationId
+	 * @param applicationStream
+	 * @param listener
+	 * @return
+	 */
+	public void checkAuthorizations(Activity checkedActivity, long storeId, String storeToken, final ApplicationAuthorizationListener listener) {
+		this.activity = checkedActivity;
+		this.storeId = storeId;
+		this.storeToken = storeToken;
+		this.listener = listener;
+
+		if (!mSpiceManager.isStarted()) {
+			mSpiceManager.start(checkedActivity);
+		}
+		
+		checkAuthorizationsAndCallback();
+	}
+	
+	public void checkAuthorizations(Activity checkedActivity, long storeId, String storeToken) {
+		this.activity = checkedActivity;
+		this.storeId = storeId;
+		this.storeToken = storeToken;
+		checkAuthorizations(checkedActivity, storeId, storeToken, new DefaultApplicationAuthorizationListener(activity, this));
+	}
+	
+
+	public void checkAuthorizationsAndCallback() {
+
+		String packageName = SystemUtils.getApplicationPackage(activity);
+		int versionCode = 0;
+		try {
+			versionCode = SystemUtils.getApplicationVersionCode(activity);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		TelephonyManager telephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+		String imei = telephonyManager.getDeviceId();
+		
+		if(!SystemUtils.checkInternetConnection(activity)) {
+			listener.dontAllow(-1);
+		} else {
+			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, imei), new ApplicationAuthorizationRequestListener() {
+				
+				@Override
+				public void onRequestSuccess(ApplicationAuthorization result) {
+					if(result.getStatus() == "OK") {
+						listener.allow(1);
+					}
+				}
+				
+				@Override
+				public void onRequestFailure(SpiceException spiceException) {
+					listener.dontAllow(0);
+				}
+			});
+		}
+		
 	}
 
 	// ============================================================================================
