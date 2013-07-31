@@ -2,5 +2,9 @@
 
     <string name="title_activity_appaloosa_dev_panel">AppaloosaDevPanelActivity</string>
     <string name="action_settings">Settings</string>
-
+	<string name="application_authorization_title">Access denied</string>
+    <string name="quit_button">Quit</string>
+    <string name="retry_button">Retry</string>
+    <string name="no_connection_message">You need to be connected to the Internet to launch this application.</string>
+    <string name="connection_error_message">Error during the communication with the server. </string>
 </resources>

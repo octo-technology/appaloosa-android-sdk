@@ -1,6 +1,8 @@
 package com.octo.appaloosasdk.utils;
 
 import com.octo.appaloosasdk.Appaloosa;
+import com.octo.appaloosasdk.R;
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,33 +10,39 @@ import android.content.DialogInterface;
 
 public class AlertDialogUtils {
 	
-	public static void showPopupQuitOrRetry(final Activity activity, final Appaloosa appaloosaSingleton) {
-		new AlertDialog.Builder(activity)
-		.setTitle("Connexion impossible")
-		.setMessage("Vous devez activer votre connexion internet.")
-		.setPositiveButton("Re-essayer", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) { 
-				appaloosaSingleton.checkAuthorizationsAndCallback();
-			}
-		})
-		.setNegativeButton("Quitter", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) { 
-				activity.finish(); 
-			}
-		})
-		.show();
+	public static AlertDialog buildPopupQuitOrRetry(final Activity activity, final Appaloosa appaloosaSingleton, String message) {
+		AlertDialog alertDialog = new AlertDialog.Builder(activity)
+			.setTitle(activity.getString(R.string.application_authorization_title))
+			.setMessage(message)
+			.setPositiveButton(activity.getString(R.string.retry_button), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) { 
+					appaloosaSingleton.checkAuthorizationsAndCallback();
+				}
+			})
+			.setNegativeButton(activity.getString(R.string.quit_button), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) { 
+					activity.finish(); 
+				}
+			})
+			.setCancelable(false)
+			.create();
+		alertDialog.setCanceledOnTouchOutside(false);
+		return alertDialog;
 	}
 
-	public static void showPopupQuit(final Activity activity, final Appaloosa appaloosaSingleton, String message) {
-		new AlertDialog.Builder(activity)
-		.setTitle("Connexion impossible")
-		.setMessage(message)
-		.setNegativeButton("Quitter", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) { 
-				activity.finish(); 
-			}
-		})
-		.show();
+	public static AlertDialog buildPopupQuit(final Activity activity, final Appaloosa appaloosaSingleton, String message) {
+		AlertDialog alertDialog = new AlertDialog.Builder(activity)
+			.setTitle(activity.getString(R.string.application_authorization_title))
+			.setMessage(message)
+			.setNegativeButton(activity.getString(R.string.quit_button), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) { 
+						activity.finish(); 
+					}
+				})
+			.setCancelable(false)
+			.create();
+		alertDialog.setCanceledOnTouchOutside(false);
+		return alertDialog;
 	}
 
 

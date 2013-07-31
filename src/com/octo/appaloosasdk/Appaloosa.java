@@ -3,8 +3,11 @@ package com.octo.appaloosasdk;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
+
+import com.octo.appaloosasdk.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,6 +45,7 @@ import com.octo.appaloosasdk.listener.ApplicationAuthorizationListener;
 import com.octo.appaloosasdk.listener.DefaultApplicationAuthorizationListener;
 import com.octo.appaloosasdk.model.Application;
 import com.octo.appaloosasdk.model.ApplicationAuthorization;
+import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
 import com.octo.appaloosasdk.model.DownloadUrl;
 import com.octo.appaloosasdk.model.UpdateStatus;
 import com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity;
@@ -409,22 +413,32 @@ public class Appaloosa {
 		TelephonyManager telephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 		String imei = telephonyManager.getDeviceId();
 		String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
+		Locale locale = activity.getResources().getConfiguration().locale;
+		
 		
 		if(!SystemUtils.checkInternetConnection(activity)) {
-			listener.dontAllow(-1);
+			listener.dontAllow(Status.NO_NETWORK, activity.getString(R.string.no_connection_message));
 		} else {
-			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, encryptedImei), new ApplicationAuthorizationRequestListener() {
+			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, encryptedImei, locale.getLanguage()), new ApplicationAuthorizationRequestListener() {
 				
 				@Override
 				public void onRequestSuccess(ApplicationAuthorization result) {
-					if(result.getStatus() == "OK") {
-						listener.allow(1);
+					Status status = null;
+					try {
+						status = Status.valueOf(result.getStatus());
+					} catch (IllegalArgumentException e) {
+						status = Status.UNKNOWN;
+					}
+					if (status == Status.AUTHORIZED) {
+						listener.allow(Status.AUTHORIZED, result.getMessage());
+					}else {
+						listener.dontAllow(status, result.getMessage());
 					}
 				}
 				
 				@Override
 				public void onRequestFailure(SpiceException spiceException) {
-					listener.dontAllow(0);
+					listener.dontAllow(Status.REQUEST_ERROR, activity.getString(R.string.connection_error_message));
 				}
 			});
 		}

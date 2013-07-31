@@ -1,0 +1,9 @@
+<resources>
+    <string name="title_activity_appaloosa_dev_panel">AppaloosaDevPanelActivity</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="application_authorization_title">Autorisation refusée</string>
+    <string name="quit_button">Quitter</string>
+    <string name="retry_button">Réessayer</string>
+    <string name="no_connection_message">Vous devez être connecté à internet pour accéder à cette application.</string>
+    <string name="connection_error_message">Erreur pendant la connexion au serveur.</string>
+</resources>

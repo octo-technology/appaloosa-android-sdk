@@ -18,18 +18,20 @@ public class ApplicationAuthorizationRequest extends SpiceRequest<ApplicationAut
 	private String storeToken;
 	private String imei;
 	private int versionCode;
+	private String locale;
 
-	public ApplicationAuthorizationRequest(String packageName, int versionCode, long storeId, String storeToken, String imei) {
+	public ApplicationAuthorizationRequest(String packageName, int versionCode, long storeId, String storeToken, String imei, String locale) {
 		super(ApplicationAuthorization.class);
 		this.packageName = packageName;
 		this.storeId = storeId;
 		this.storeToken = storeToken;
 		this.imei = imei;
 		this.versionCode = versionCode;
+		this.locale = locale;
 	}
 
 	@Override
 	public ApplicationAuthorization loadDataFromNetwork() throws Exception {
-		return WebServices.getInstance().getApplicationAuthorizations(packageName, versionCode, storeId, storeToken, imei);
+		return WebServices.getInstance().getApplicationAuthorizations(packageName, versionCode, storeId, storeToken, imei, locale);
 	}
 }

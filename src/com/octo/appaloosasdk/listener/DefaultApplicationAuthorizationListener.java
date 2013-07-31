@@ -1,6 +1,7 @@
 package com.octo.appaloosasdk.listener;
 
 import com.octo.appaloosasdk.Appaloosa;
+import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
 import com.octo.appaloosasdk.utils.AlertDialogUtils;
 
 import android.app.Activity;
@@ -16,16 +17,15 @@ public class DefaultApplicationAuthorizationListener implements ApplicationAutho
 	}
 	
 	@Override
-	public void allow(int reason){
-		
+	public void allow(Status status, String message) {
 	}
-	
+
 	@Override
-	public void dontAllow(int reason) {
-		if(reason == -1) {
-			AlertDialogUtils.showPopupQuitOrRetry(activity, appaloosaSingleton);
+	public void dontAllow(Status status, String message) {
+		if(status == Status.NO_NETWORK) {
+			AlertDialogUtils.buildPopupQuitOrRetry(activity, appaloosaSingleton, message).show();
 		} else {
-			AlertDialogUtils.showPopupQuit(activity, appaloosaSingleton, "Message");
-		}
+			AlertDialogUtils.buildPopupQuit(activity, appaloosaSingleton, message).show();
+		}		
 	}
 }
