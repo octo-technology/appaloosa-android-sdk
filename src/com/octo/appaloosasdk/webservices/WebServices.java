@@ -10,6 +10,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.octo.appaloosasdk.model.Application;
@@ -51,7 +52,7 @@ public class WebServices {
 	public static interface Urls {
 		public static final String GET_APPLICATION_INFORMATION = "%1$d/mobile_applications/%2$s.json?token=%3$s";
 		public static final String GET_APPLICATION_BINARY = "%1$d/mobile_applications/%2$d/install?token=%3$s";
-		public static final String GET_APPLICATION_AUTHORIZATIONS = "%1$d/mobile_applications/authorized?token=%2$s&package=%3$s&imei=%4$s&version=%5$d";
+		public static final String GET_APPLICATION_AUTHORIZATIONS = "%1$d/mobile_applications/authorized?token=%2$s&package=%3$s&device_id=%4$s&version=%5$d";
 	}
 
 	// ============================================================================================
@@ -103,9 +104,8 @@ public class WebServices {
 		return app;
 	}
 	
-	public ApplicationAuthorization getApplicationAuthorizations(String packageName, int versionCode, long storeId, String storeToken, String imei) {
-		
-		String URL = WebServices.WEBSERVICES_BASE_URL + String.format(WebServices.Urls.GET_APPLICATION_AUTHORIZATIONS, storeId, storeToken, packageName, imei, versionCode);
+	public ApplicationAuthorization getApplicationAuthorizations(String packageName, int versionCode, long storeId, String storeToken, String encryptedImei) {
+		String URL = WebServices.WEBSERVICES_BASE_URL + String.format(WebServices.Urls.GET_APPLICATION_AUTHORIZATIONS, storeId, storeToken, packageName, encryptedImei, versionCode);
 		Log.d(TAG_APPALOOSA, "Retrieve application authorization from " + URL);
 
 		ApplicationAuthorization appAuthoriezation = mRestTemplate.getForObject(URL, ApplicationAuthorization.class);

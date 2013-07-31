@@ -15,6 +15,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 
 import com.octo.android.robospice.SpiceManager;
@@ -407,11 +408,12 @@ public class Appaloosa {
 		}
 		TelephonyManager telephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 		String imei = telephonyManager.getDeviceId();
+		String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
 		
 		if(!SystemUtils.checkInternetConnection(activity)) {
 			listener.dontAllow(-1);
 		} else {
-			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, imei), new ApplicationAuthorizationRequestListener() {
+			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, encryptedImei), new ApplicationAuthorizationRequestListener() {
 				
 				@Override
 				public void onRequestSuccess(ApplicationAuthorization result) {

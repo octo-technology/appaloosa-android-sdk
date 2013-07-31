@@ -4,8 +4,6 @@ import com.octo.appaloosasdk.Appaloosa;
 import com.octo.appaloosasdk.utils.AlertDialogUtils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 public class DefaultApplicationAuthorizationListener implements ApplicationAuthorizationListener  {
 	
