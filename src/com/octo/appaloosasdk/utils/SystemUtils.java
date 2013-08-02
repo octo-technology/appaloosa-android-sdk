@@ -1,10 +1,12 @@
 package com.octo.appaloosasdk.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -128,6 +130,7 @@ public class SystemUtils {
 	 * @param PackageInfo
 	 * @return list of ConfigProperty
 	 */
+	@SuppressLint("NewApi")
 	public static List<ConfigProperty> getPackageInfoDataList(PackageInfo packageInfo) {
 		List<ConfigProperty> packageInfoList = new ArrayList<ConfigProperty>();
 		
@@ -137,9 +140,11 @@ public class SystemUtils {
 		packageInfoList.add(new ConfigProperty("Package name", packageInfo.packageName));
 		packageInfoList.add(new ConfigProperty("App version name", packageInfo.versionName));
 		packageInfoList.add(new ConfigProperty("App version code", String.valueOf(packageInfo.versionCode)));
-		packageInfoList.add(new ConfigProperty("First install", String.valueOf(DateFormat.format("dd/MM/yyyy kk:mm", packageInfo.firstInstallTime))));
-		packageInfoList.add(new ConfigProperty("Last update", String.valueOf(DateFormat.format("dd/MM/yyyy kk:mm", packageInfo.lastUpdateTime))));
-
+		if (android.os.Build.VERSION.SDK_INT >= 9) {
+			packageInfoList.add(new ConfigProperty("First install", String.valueOf(DateFormat.format("dd/MM/yyyy kk:mm", packageInfo.firstInstallTime))));
+			packageInfoList.add(new ConfigProperty("Last update", String.valueOf(DateFormat.format("dd/MM/yyyy kk:mm", packageInfo.lastUpdateTime))));
+		}
+		
 		return packageInfoList;
 	}
 	
@@ -248,6 +253,8 @@ public class SystemUtils {
 		String device = android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
 		device = device.substring(0, 1).toUpperCase(Locale.getDefault()) + device.substring(1);
 		generalDataList.add(new ConfigProperty("Device Model", device));
+
+		generalDataList.add(new ConfigProperty("Rooted device", isRootedDevice() ? "Yes" : "No"));
 		
 		generalDataList.add(new ConfigProperty("OS version", android.os.Build.VERSION.RELEASE));
 		generalDataList.add(new ConfigProperty("Android API level", String.valueOf(android.os.Build.VERSION.SDK_INT)));
@@ -311,5 +318,61 @@ public class SystemUtils {
 		storageDataList.add(new ConfigProperty("Free", mbAvailable + " Mb"));
 		storageDataList.add(new ConfigProperty("Total", mbTotal + " Mb"));
 		return storageDataList;
+	}
+	
+	/**
+	 * Determine if the device is rooted.
+	 * 
+	 * @return true if the device is rooted, false otherwise.
+	 */
+	public static boolean isRootedDevice() {
+
+		String[] rootCommands = {
+				"su",
+				"/system/bin/su",
+				"/system/xbin/su",
+				"which su",
+				"/system/bin/which su",
+				"/system/xbin/which su"
+				};
+
+		if (isAbleToRunCommand(rootCommands)) {
+			return true;
+		}
+
+		String tags = android.os.Build.TAGS;
+		if (tags != null && tags.contains("test-keys")) {
+			return true;
+		}
+
+		if (superUserApkExists()) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	private static boolean isAbleToRunCommand(String[] commands) {
+
+		boolean executedSuccesfully = false;
+		for (String command : commands) {
+			try {
+				Runtime.getRuntime().exec(command);
+				executedSuccesfully = true;
+			} catch (Exception e) { }
+		}
+
+		return executedSuccesfully;
+	}
+
+	private static boolean superUserApkExists() {
+
+		try {
+			if (new File("/system/app/Superuser.apk").exists()) {
+				return true;
+			}
+		} catch (Exception e) { }
+		
+		return false;
 	}
 }
