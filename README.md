@@ -19,7 +19,7 @@ If you use maven or any other tool with dependency management, add the following
        <dependency>
 		<groupId>com.appaloosa-store</groupId>
 	        <artifactId>appaloosa-android-sdk</artifactId>
-	        <version>1.0.0</version>
+	        <version>1.0.1</version>
 		<type>apklib</type>
 	</dependency>
 
