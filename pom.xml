@@ -12,7 +12,7 @@
 	<artifactId>appaloosa-android-sdk</artifactId>
 	<packaging>apklib</packaging>
 	<name>Appaloosa - SDK</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
     <description>Android SDK for appaloosa-store</description>
     <url>http://appaloosa-store.com</url>
     <licenses>
