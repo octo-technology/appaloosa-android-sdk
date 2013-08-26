@@ -11,6 +11,7 @@ import com.octo.appaloosasdk.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
@@ -49,6 +52,7 @@ import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
 import com.octo.appaloosasdk.model.DownloadUrl;
 import com.octo.appaloosasdk.model.UpdateStatus;
 import com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity;
+import com.octo.appaloosasdk.utils.DeviceInfo;
 import com.octo.appaloosasdk.utils.SystemUtils;
 
 /**
@@ -73,7 +77,7 @@ public class Appaloosa {
 	private long storeId;
 	private String storeToken;
 	private ApplicationAuthorizationListener listener;
-
+	private ProgressDialog progressDialog;
 	// Listeners (keep in field for next time called)
 	private ApplicationUpdateListener mApplicationUpdateListener;
 
@@ -385,7 +389,8 @@ public class Appaloosa {
 		this.storeId = storeId;
 		this.storeToken = storeToken;
 		this.listener = listener;
-
+		progressDialog = ProgressDialog.show(checkedActivity, "", checkedActivity.getString(R.string.loading_authorization_message), true);
+		
 		if (!mSpiceManager.isStarted()) {
 			mSpiceManager.start(checkedActivity);
 		}
@@ -410,8 +415,8 @@ public class Appaloosa {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		TelephonyManager telephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-		String imei = telephonyManager.getDeviceId();
+		String imei = DeviceInfo.getDeviceId(activity);
+		Log.d("IMEI", imei);
 		String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
 		Locale locale = activity.getResources().getConfiguration().locale;
 		
@@ -423,6 +428,7 @@ public class Appaloosa {
 				
 				@Override
 				public void onRequestSuccess(ApplicationAuthorization result) {
+					progressDialog.dismiss();
 					Status status = null;
 					try {
 						status = Status.valueOf(result.getStatus());

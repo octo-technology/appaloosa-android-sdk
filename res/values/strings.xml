@@ -7,4 +7,5 @@
     <string name="retry_button">Retry</string>
     <string name="no_connection_message">You need to be connected to the Internet to launch this application.</string>
     <string name="connection_error_message">Error during the communication with the server. </string>
+    <string name="loading_authorization_message">Check your authorization to use the application. Wait please.</string>
 </resources>
