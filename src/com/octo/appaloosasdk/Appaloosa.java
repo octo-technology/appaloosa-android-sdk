@@ -7,8 +7,6 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 
-import com.octo.appaloosasdk.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -18,11 +16,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Environment;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
