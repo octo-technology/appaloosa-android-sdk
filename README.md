@@ -8,6 +8,7 @@ Main features of Appaloosa SDK
 
 * Application auto-update: check if the application is up to date and install the latest version if not
 * Application developer-panel: display a screen with information about the device and the application.
+* Application kill-switch: disallow a device to launch the application (if the device is blacklisted on appaloosa-store)
 
 Installation
 ------------
@@ -73,8 +74,6 @@ STORE_ID and STORE_TOKEN are located at the bottom of this page
 
 ![store toek and store id](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-token-and-id.png)
 
-If you want to go further, you can watch the sdk-test subproject to have 3 samples.
-
 ### Developer panel
 
 The developer panel gives information about the device and the application.
@@ -88,6 +87,67 @@ You need to add the following activity in your AndroidManifest.xml :
 Then you only need the following line in your code:
 
     Appaloosa.getInstance().displayDevPanel(this); 
+
+### Kill switch
+
+In all cases, you need to configure a service in your AndroidManifest.xml in order to request the Appaloosa server asynchronously:
+
+    <service android:name="com.octo.appaloosasdk.async.AppaloosaSpiceService" android:exported="false" />
+
+You also need the following permisions (network state, internet and wifi_state to request Appaloosa services on internet, external storage to store the apk downloaded):
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+Then you have two choice to implement the kill switch.
+The easiest way is to add this line to do the verification. Tips: do it in the first activity of your application.
+
+     Appaloosa.getInstance().checkAuthorizations(this, STORE_ID, STORE_TOKEN);
+     
+STORE_ID and STORE_TOKEN can be found in the Appaloosa console (in settings section).
+
+Follow the settings link
+
+![Settings link](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-settings-link.png)
+
+STORE_ID and STORE_TOKEN are located at the bottom of this page
+
+![store toek and store id](https://raw.github.com/octo-online/appaloosa-android-sdk/master/images/appaloosa-store-token-and-id.png)
+
+During the process, ProgressDialog is shown. 
+If the device is allowed to access to the application, the ProcessDialog disapear.
+If the device is now allowed, user if forced to quit the application.
+
+You can also implement your own behavior through a listener ApplicationAuthorizationListener:
+	
+	Appaloosa.getInstance().checkAuthorizations(this, STORE_ID, STORE_TOKEN, new ApplicationAuthorizationListener(){
+		@Override
+		public void allow(Status status, String message) {
+			// User is allowed to launch the application
+		}
+		@Override
+		public void dontAllow(Status status, String message) {
+			// User is not allowed to launch the application
+		}
+	});
+
+Status are the following: 
+	
+	public static enum Status {
+		UNKNOWN_APPLICATION, 
+		AUTHORIZED, 
+		UNREGISTERED_DEVICE, 
+		UNKNOWN_DEVICE, 
+		NOT_AUTHORIZED, 
+		DEVICE_ID_FORMAT_ERROR, 
+		NO_NETWORK, 
+		REQUEST_ERROR, 
+		UNKNOWN
+	}
+
+You can use them to help your user to launch the application (for example by telling him to switch on the network)
 
 Sample
 ------
