@@ -10,7 +10,7 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 
 /**
- * Utility class used to generate a constant "UDID", based on the IMEI or the Mac Adfress
+ * Utility class used to generate a constant "UDID", based on the IMEI or the mac address
  */
 public class DeviceInfo {
 
