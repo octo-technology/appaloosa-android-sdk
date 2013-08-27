@@ -43,6 +43,11 @@
 	      	<name>Mahmoud Reda</name>
 	      	<email>mmm@octo.com</email>
 	    </developer>
+	    <developer>
+	    	<id>chp</id>
+	      	<name>Christopher Parola</name>
+	      	<email>chp@octo.com</email>
+	    </developer>
 	</developers>
 
 	<prerequisites>
