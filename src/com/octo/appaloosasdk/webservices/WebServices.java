@@ -44,9 +44,6 @@ public class WebServices {
 		return instance;
 	}
 
-	/**
-	 * 
-	 */
 	public static interface Urls {
 		public static final String GET_APPLICATION_INFORMATION = "%1$d/mobile_applications/%2$s.json?token=%3$s";
 		public static final String GET_APPLICATION_BINARY = "%1$d/mobile_applications/%2$d/install?token=%3$s";
