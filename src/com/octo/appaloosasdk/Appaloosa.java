@@ -32,11 +32,13 @@ import com.octo.android.robospice.request.listener.RequestProgress;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.request.simple.BigBinaryRequest;
 import com.octo.appaloosasdk.async.AppaloosaSpiceService;
+import com.octo.appaloosasdk.async.listeners.ApplicationAuthorizationListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationAuthorizationRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationDownloadRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationInformationRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpToDateListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpdateListener;
+import com.octo.appaloosasdk.async.listeners.DefaultApplicationAuthorizationListener;
 import com.octo.appaloosasdk.async.requests.ApplicationAuthorizationRequest;
 import com.octo.appaloosasdk.async.requests.ApplicationBinaryUrlRequest;
 import com.octo.appaloosasdk.async.requests.ApplicationInformationRequest;
@@ -44,8 +46,6 @@ import com.octo.appaloosasdk.exception.AppaloosaException;
 import com.octo.appaloosasdk.exception.ApplicationDownloadException;
 import com.octo.appaloosasdk.exception.ApplicationInformationException;
 import com.octo.appaloosasdk.exception.ApplicationInstallException;
-import com.octo.appaloosasdk.listener.ApplicationAuthorizationListener;
-import com.octo.appaloosasdk.listener.DefaultApplicationAuthorizationListener;
 import com.octo.appaloosasdk.model.Application;
 import com.octo.appaloosasdk.model.ApplicationAuthorization;
 import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
@@ -377,12 +377,17 @@ public class Appaloosa {
 	}
 	
 	/**
-	 * Check authorisations
+	 * This method verify if the device is allowed to launch the application <br/>
+	 * It calls checkAuthorizationsAndCallback to check the authorisation
+	 * <b>EXECUTED ASYNCHRONOUSLY (NOT IN UI THREAD)</b> : see <a href="https://github.com/octo-online/robospice">Robospice</a> library
+	 * @param checkedActivity
+	 *	 		  activity which is calling checkAuthorizations (context of the application)
 	 * @param storeId
-	 * @param applicationId
-	 * @param applicationStream
+	 *            the store identifier available in store settings on the console
+	 * @param storeToken
+	 * 			  the store token available in store settings on the console
 	 * @param listener
-	 * @return
+	 *            the listener of the authorization process
 	 */
 	public void checkAuthorizations(Activity checkedActivity, long storeId, String storeToken, final ApplicationAuthorizationListener listener) {
 		this.activity = checkedActivity;
@@ -398,6 +403,18 @@ public class Appaloosa {
 		checkAuthorizationsAndCallback();
 	}
 	
+	/**
+	 * This method verify if the device is allowed to launch the application <br/>
+	 * It create a DefaultApplicationAuthorizationListener to handle the action in case of allowed or not allowed device.
+	 * <b>EXECUTED ASYNCHRONOUSLY (NOT IN UI THREAD)</b> : see <a href="https://github.com/octo-online/robospice">Robospice</a> library
+	 * WARNING : Default listener will close the application in case of not allowed device
+	 * @param checkedActivity
+	 *	 		  activity which is calling checkAuthorizations (context of the application)
+	 * @param storeId
+	 *            the store identifier available in store settings on the console
+	 * @param storeToken
+	 * 			  the store token available in store settings on the console
+	 */
 	public void checkAuthorizations(Activity checkedActivity, long storeId, String storeToken) {
 		this.activity = checkedActivity;
 		this.storeId = storeId;
@@ -405,7 +422,9 @@ public class Appaloosa {
 		checkAuthorizations(checkedActivity, storeId, storeToken, new DefaultApplicationAuthorizationListener(activity, this));
 	}
 	
-
+	/**
+	 * This method launch the checkAuthorizations request with right params and use the listener to give the answer
+	 */
 	public void checkAuthorizationsAndCallback() {
 
 		String packageName = SystemUtils.getApplicationPackage(activity);
@@ -416,10 +435,8 @@ public class Appaloosa {
 			e.printStackTrace();
 		}
 		String imei = DeviceInfo.getDeviceId(activity);
-		Log.d("IMEI", imei);
 		String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
 		Locale locale = activity.getResources().getConfiguration().locale;
-		
 		
 		if(!SystemUtils.checkInternetConnection(activity)) {
 			listener.dontAllow(Status.NO_NETWORK, activity.getString(R.string.no_connection_message));
@@ -448,13 +465,11 @@ public class Appaloosa {
 				}
 			});
 		}
-		
 	}
 
 	// ============================================================================================
 	// PRIVATE
 	// ============================================================================================
-
 	private File writeFileToDisk(long storeId, long applicationId, InputStream applicationStream, ApplicationUpdateListener listener) {
 		// Verify external storage availability
 		if (!SystemUtils.isExternalStorageAvailable()) {
