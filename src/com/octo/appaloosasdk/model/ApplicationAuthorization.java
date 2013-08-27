@@ -6,7 +6,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class ApplicationAuthorization {
 	
 	public static enum Status {
-		UNKNOWN_DEVICE, UNREGISTERED_DEVICE, AUTHORIZED, NOT_AUTHORIZED, UNKNOWN, NO_NETWORK, REQUEST_ERROR
+		UNKNOWN_APPLICATION, AUTHORIZED, UNREGISTERED_DEVICE, UNKNOWN_DEVICE, NOT_AUTHORIZED, DEVICE_ID_FORMAT_ERROR, NO_NETWORK, REQUEST_ERROR, UNKNOWN
 	}
 
 	private String status;
