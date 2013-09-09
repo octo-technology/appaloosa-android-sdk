@@ -61,8 +61,7 @@ public class DeviceInfo {
 	}
 	
 	protected static String getImei(Context context) {
-	    TelephonyManager m = (TelephonyManager) context
-	            .getSystemService(Context.TELEPHONY_SERVICE);
+	    TelephonyManager m = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 	    String imei = m != null ? m.getDeviceId() : null;
 	    return imei;
 	}

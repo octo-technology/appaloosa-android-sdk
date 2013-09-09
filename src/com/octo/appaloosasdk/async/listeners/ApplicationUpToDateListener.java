@@ -2,6 +2,7 @@ package com.octo.appaloosasdk.async.listeners;
 
 import com.octo.appaloosasdk.Appaloosa;
 import com.octo.appaloosasdk.exception.AppaloosaException;
+import com.octo.appaloosasdk.model.ApplicationCheckUpdate;
 
 /**
  * Listener used to know the result of the {@link Appaloosa#checkForUpdate} method
@@ -20,7 +21,7 @@ public interface ApplicationUpToDateListener {
 	 * @param id
 	 *            the technical id of the application (different from the package name)
 	 */
-	void onRequestSuccess(boolean isUpToDate, long id);
+	void onRequestSuccess(ApplicationCheckUpdate applicatonCheckUpdate);
 
 	/**
 	 * This method is called when the {@link Appaloosa#checkForUpdate} method failed. <br />
