@@ -5,6 +5,7 @@
     <string name="quit_button">Quitter</string>
     <string name="retry_button">Réessayer</string>
     <string name="no_connection_message">Vous devez être connecté à internet pour accéder à cette application.</string>
+    <string name="not_authorized_message">Votre appareil n\'est pas autorisé à lancer cette application</string>
     <string name="connection_error_message">Erreur pendant la connexion au serveur.</string>
     <string name="loading_authorization_message">Vérification de vos droits d\'utilisation de cette application. Veuillez patienter.</string>
 </resources>

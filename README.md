@@ -114,6 +114,8 @@ Then you only need the following line in your code:
 
 ### Kill switch
 
+This SDK provides a mecanism of kill switch. Since the web interface (http://www.appaloosa-store.com/), you are able to authorize or not a device to access to the application. The mecanism also works offline by reading the blacklisted status from a protected local file.
+
 In all cases, you need to configure a service in your AndroidManifest.xml in order to request the Appaloosa server asynchronously:
 
     <service android:name="com.octo.appaloosasdk.async.AppaloosaSpiceService" android:exported="false" />

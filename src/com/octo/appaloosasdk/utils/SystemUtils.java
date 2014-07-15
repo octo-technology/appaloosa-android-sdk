@@ -1,12 +1,18 @@
 package com.octo.appaloosasdk.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
@@ -21,9 +27,14 @@ import android.os.StatFs;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 
+import com.octo.appaloosasdk.R;
+import com.octo.appaloosasdk.model.ApplicationAuthorization;
+import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
 import com.octo.appaloosasdk.model.ConfigProperty;
 
 public class SystemUtils {
+	
+	private static final String BLACKLIST_FILENAME = "BLACKLIST_STATUS";
 
 	public static HashMap<Integer, String> osVersion;
 
@@ -374,5 +385,40 @@ public class SystemUtils {
 		} catch (Exception e) { }
 		
 		return false;
+	}
+	
+	public static void setBlacklistStatusToFile(Status status, Activity checkedActivity) {
+		try {
+			String statusString = status.toString();
+			FileOutputStream fOS = checkedActivity.openFileOutput(BLACKLIST_FILENAME, Context.MODE_PRIVATE);
+			fOS.write(statusString.getBytes());
+			fOS.close();
+		} catch (IOException e) { }
+	}
+	
+	public static ApplicationAuthorization getBlacklistStatusFromFile(Activity checkedActivity) {
+		ApplicationAuthorization applicationAuthorization;
+		try {
+			FileInputStream fIS = checkedActivity.openFileInput(BLACKLIST_FILENAME);
+            InputStreamReader iSR = new InputStreamReader(fIS);
+            BufferedReader bR = new BufferedReader(iSR);
+            Status status = Status.valueOf(bR.readLine());
+            bR.close();
+            iSR.close();
+            fIS.close();
+            applicationAuthorization = getApplicationAuthorizationWithStatus(status, checkedActivity);
+		} catch (IOException e) {
+			applicationAuthorization = getApplicationAuthorizationWithStatus(Status.AUTHORIZED, checkedActivity);
+		}
+		return applicationAuthorization;
+	}
+
+	private static ApplicationAuthorization getApplicationAuthorizationWithStatus(Status status, Activity checkedActivity) {
+		ApplicationAuthorization applicationAuthorization = new ApplicationAuthorization();
+		applicationAuthorization.setStatus(status.toString());
+		if(status == Status.NOT_AUTHORIZED) {
+		    applicationAuthorization.setMessage(checkedActivity.getString(R.string.not_authorized_message));
+		}
+		return applicationAuthorization;
 	}
 }
