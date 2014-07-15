@@ -370,13 +370,19 @@ public class Appaloosa {
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
-		String imei = DeviceInfo.getDeviceId(activity);
-		String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
-		Locale locale = activity.getResources().getConfiguration().locale;
 		
 		if(!SystemUtils.checkInternetConnection(activity)) {
-			listener.dontAllow(Status.NO_NETWORK, activity.getString(R.string.no_connection_message));
+			progressDialog.dismiss();
+			ApplicationAuthorization authorization = SystemUtils.getBlacklistStatusFromFile(this.activity);
+			Status status = Status.valueOf(authorization.getStatus());
+			if(status == Status.NOT_AUTHORIZED) {
+				listener.dontAllow(status, authorization.getMessage());
+			}
 		} else {
+			String imei = DeviceInfo.getDeviceId(activity);
+			String encryptedImei = Base64.encodeToString(imei.getBytes(), Base64.DEFAULT);
+			Locale locale = activity.getResources().getConfiguration().locale;
+			
 			mSpiceManager.execute(new ApplicationAuthorizationRequest(packageName, versionCode, storeId, storeToken, encryptedImei, locale.getLanguage()), new ApplicationAuthorizationRequestListener() {
 				
 				@Override
@@ -390,8 +396,10 @@ public class Appaloosa {
 					}
 					if (status == Status.AUTHORIZED) {
 						listener.allow(Status.AUTHORIZED, result.getMessage());
+						SystemUtils.setBlacklistStatusToFile(status, Appaloosa.getInstance().activity);
 					}else {
 						listener.dontAllow(status, result.getMessage());
+						SystemUtils.setBlacklistStatusToFile(status, Appaloosa.getInstance().activity);
 					}
 				}
 				
