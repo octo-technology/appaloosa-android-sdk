@@ -26,7 +26,7 @@ public class WebServices {
 	// CONSTANTS
 	// ============================================================================================
 	/** base url of appaloosa web services */
-	public static final String WEBSERVICES_BASE_URL = "https://www.appaloosa-store.com/";
+	public static String WEBSERVICES_BASE_URL = "https://www.appaloosa-store.com/";
 
 	/** Timeout when calling a web service (in ms). */
 	private static final int WEBSERVICES_TIMEOUT = 30000;
@@ -98,5 +98,9 @@ public class WebServices {
 
 		ApplicationAuthorization appAuthoriezation = mRestTemplate.getForObject(URL, ApplicationAuthorization.class);
 		return appAuthoriezation;
+	}
+	
+	public void setWebServicesBaseUrl(String url) {
+		WEBSERVICES_BASE_URL = url;
 	}
 }
