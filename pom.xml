@@ -10,7 +10,7 @@
   	</parent>
 	<groupId>com.appaloosa-store</groupId>
 	<artifactId>appaloosa-android-sdk</artifactId>
-	<packaging>apklib</packaging>
+	<packaging>aar</packaging>
 	<name>Appaloosa - SDK</name>
 	<version>1.0.2-SNAPSHOT</version>
     <description>Android SDK for appaloosa-store</description>
@@ -107,7 +107,7 @@
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.9.0-rc.2</version>
 				<configuration>
 					<androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
 					<assetsDirectory>${project.basedir}/assets</assetsDirectory>
