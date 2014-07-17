@@ -59,7 +59,7 @@
 		<android-maven-plugin.version>3.4.2-SNAPSHOT</android-maven-plugin.version>
 		<android.version>4.1.1.4</android.version>
 		<robospice.version>1.4.12</robospice.version>
-		<jackson.version>1.9.11</jackson.version>
+		<jackson.version>1.9.13</jackson.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
