@@ -401,11 +401,13 @@ public class Appaloosa {
 						listener.dontAllow(status, result.getMessage());
 						SystemUtils.setBlacklistStatusToFile(status, Appaloosa.getInstance().activity);
 					}
+					mSpiceManager.shouldStop();
 				}
 				
 				@Override
 				public void onRequestFailure(SpiceException spiceException) {
 					listener.dontAllow(Status.REQUEST_ERROR, activity.getString(R.string.connection_error_message));
+					mSpiceManager.shouldStop();
 				}
 			});
 		}
