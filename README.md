@@ -51,9 +51,6 @@ Tested with Eclipse Juno.
 
 * Install the Maven Integration for Eclipse v1.4.1 from the following repo via Eclipse's software installation feature: [Maven Integration for Eclipse v1.4.1 Repo](http://download.eclipse.org/technology/m2e/releases/1.4/1.4.1.20140328-1905/)
 * Install the Android for Maven Eclipse package and the Android Developer tools if necessary from the repo [m2e-android Repo](http://rgladwell.github.io/m2e-android/updates)
-* Install the Android Connector plugin from the m2e marketplace: go to Eclipse's preference, Maven, Discovery, Open Catalog and then choose and install the Android Connector.
-
-The latest version of m2e (v1.5.0) isn't compatible with the Android Connector as of mid-July 2014.
 
 * Import the SDK as an Android project.
 * Mavenize it (right-click on the project folder, Configure, Convert to Maven Project).
@@ -63,8 +60,8 @@ At this point, the SDK folder project should not display any errors.
 * Right-click the project folder, go to Properties, Android and check that "is Library" is checked.
 * Still in the properties, go to Java Build Path, Source and expand the AppaloosaDevPanel/src folder. Double-click the Output Folder and set it as its default setting.
 * Still in the Java Build Path, go to Order and Export and check "Maven Dependencies".
-* In your own Android project properties, go to Android and add the SDK as a library from here.
-Don't forget to clean the two projects.
+* In your own Android project properties, go to Java Build Path, Projects and add the SDK from there.
+* Also add it in Properties, Android as a library reference.
 
 You may encounter a Dex loader error: as the android-support-v4.jar is already included in the SDK's dependancies, you might have to delete it from your libs folder. 
 
