@@ -75,13 +75,11 @@ In all cases, you need to configure a service in your AndroidManifest.xml in ord
 
     <service android:name="com.octo.appaloosasdk.async.AppaloosaSpiceService" android:exported="false" />
 
-You also need the following permisions (network state, internet and wifi_state to request Appaloosa services on internet, external storage to store the apk downloaded, phone_state to identify the device):
+You also need the following permisions (network state and internet to request Appaloosa services on internet, external storage to store the apk downloaded):
 
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
 Then you only need the following line in your code:
 

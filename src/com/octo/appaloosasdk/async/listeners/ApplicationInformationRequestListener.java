@@ -6,7 +6,6 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.appaloosasdk.Appaloosa;
 import com.octo.appaloosasdk.model.Application;
-import com.octo.appaloosasdk.model.ApplicationCheckUpdate;
 
 /**
  * Listener used to know the result of the {@link Appaloosa#getApplicationInformation} method
@@ -14,7 +13,7 @@ import com.octo.appaloosasdk.model.ApplicationCheckUpdate;
  * @author Jerome Van Der Linden
  * 
  */
-public abstract class ApplicationCheckForUpdateRequestListener implements RequestListener<ApplicationCheckUpdate> {
+public abstract class ApplicationInformationRequestListener implements RequestListener<Application> {
 
 	/**
 	 * Override this method if you want to do something in case of error
@@ -29,6 +28,6 @@ public abstract class ApplicationCheckForUpdateRequestListener implements Reques
 	 * @param result
 	 *            the application retrieved asynchronously
 	 */
-	public abstract void onRequestSuccess(ApplicationCheckUpdate result);
+	public abstract void onRequestSuccess(Application result);
 
 }

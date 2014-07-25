@@ -1,5 +1,7 @@
 package com.octo.appaloosasdk.webservices;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -10,8 +12,8 @@ import org.springframework.web.client.RestTemplate;
 
 import android.util.Log;
 
+import com.octo.appaloosasdk.model.Application;
 import com.octo.appaloosasdk.model.ApplicationAuthorization;
-import com.octo.appaloosasdk.model.ApplicationCheckUpdate;
 import com.octo.appaloosasdk.model.DownloadUrl;
 
 /**
@@ -43,7 +45,7 @@ public class WebServices {
 	}
 
 	public static interface Urls {
-		public static final String GET_APPLICATION_CHECK_FOR_UPDATE = "%1$d/mobile_application_updates/is_update_needed?token=%2$s&application_id=%3$s&device_id=%4$s&version=%5$d";
+		public static final String GET_APPLICATION_INFORMATION = "%1$d/mobile_applications/%2$s.json?token=%3$s";
 		public static final String GET_APPLICATION_BINARY = "%1$d/mobile_applications/%2$d/install?token=%3$s";
 		public static final String GET_APPLICATION_AUTHORIZATIONS = "%1$d/mobile_application_updates/is_authorized?token=%2$s&application_id=%3$s&device_id=%4$s&version=%5$d&locale=%6$s";
 	}
@@ -77,11 +79,16 @@ public class WebServices {
 	// ============================================================================================
 	// PUBLIC
 	// ============================================================================================
-	public ApplicationCheckUpdate getApplicationCheckForUpdate(String packageName, long storeId, String storeToken, String encryptedDeviceId, int versionCode) {
-		String URL = WebServices.WEBSERVICES_BASE_URL + String.format(WebServices.Urls.GET_APPLICATION_CHECK_FOR_UPDATE, storeId, storeToken, packageName, encryptedDeviceId, versionCode);
-		Log.d(TAG_APPALOOSA, "Retrieve application update information from " + URL);
-
-		return mRestTemplate.getForObject(URL, ApplicationCheckUpdate.class);
+	public Application getApplicationInformation(String packageName, long storeId, String storeToken) {
+		String URL = WEBSERVICES_BASE_URL + String.format(Urls.GET_APPLICATION_INFORMATION, storeId, packageName.replaceAll("\\.", "%2E"), storeToken);
+		Log.d(TAG_APPALOOSA, "Retrieve application informations from " + URL);
+		try {
+			return mRestTemplate.getForObject(new URI(URL), Application.class);
+		}
+		catch (URISyntaxException e) {
+			Log.e(TAG_APPALOOSA, "Bad URL " + URL, e);
+		}
+		return null;
 	}
 
 	public DownloadUrl getApplicationDownloadUrl(long storeId, long applicationId, String storeToken) {

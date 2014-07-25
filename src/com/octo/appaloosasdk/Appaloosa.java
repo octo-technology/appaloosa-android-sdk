@@ -22,19 +22,21 @@ import android.util.Log;
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.request.listener.RequestProgress;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.request.simple.BigBinaryRequest;
 import com.octo.appaloosasdk.async.AppaloosaSpiceService;
 import com.octo.appaloosasdk.async.listeners.ApplicationAuthorizationListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationAuthorizationRequestListener;
-import com.octo.appaloosasdk.async.listeners.ApplicationCheckForUpdateRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationDownloadRequestListener;
+import com.octo.appaloosasdk.async.listeners.ApplicationInformationRequestListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpToDateListener;
 import com.octo.appaloosasdk.async.listeners.ApplicationUpdateListener;
 import com.octo.appaloosasdk.async.listeners.DefaultApplicationAuthorizationListener;
 import com.octo.appaloosasdk.async.requests.ApplicationAuthorizationRequest;
-import com.octo.appaloosasdk.async.requests.ApplicationCheckForUpdateRequest;
+import com.octo.appaloosasdk.async.requests.ApplicationBinaryUrlRequest;
+import com.octo.appaloosasdk.async.requests.ApplicationInformationRequest;
 import com.octo.appaloosasdk.exception.AppaloosaException;
 import com.octo.appaloosasdk.exception.ApplicationDownloadException;
 import com.octo.appaloosasdk.exception.ApplicationInformationException;
@@ -42,7 +44,7 @@ import com.octo.appaloosasdk.exception.ApplicationInstallException;
 import com.octo.appaloosasdk.model.Application;
 import com.octo.appaloosasdk.model.ApplicationAuthorization;
 import com.octo.appaloosasdk.model.ApplicationAuthorization.Status;
-import com.octo.appaloosasdk.model.ApplicationCheckUpdate;
+import com.octo.appaloosasdk.model.DownloadUrl;
 import com.octo.appaloosasdk.model.UpdateStatus;
 import com.octo.appaloosasdk.ui.activity.AppaloosaDevPanelActivity;
 import com.octo.appaloosasdk.utils.DeviceInfo;
@@ -122,24 +124,25 @@ public class Appaloosa {
 		// Verify the version of the application
 		checkForUpdate(context, storeId, storeToken, new ApplicationUpToDateListener() {
 
+			public void onRequestSuccess(boolean isUpToDate, final long id) {
+				// if this is not the latest version, download and install it
+				if (isUpToDate == false) {
+
+					if (showConfirmationDialog) {
+						Log.d(TAG_APPALOOSA, "Show install confirm dialog");
+						showConfirmationDialog(context, storeId, storeToken, id, dialogTitleResourceId, dialogMessageResourceId, listener);
+					}
+					else {
+						downloadAndInstallApplication(context, storeId, storeToken, id, listener);
+					}
+				}
+			}
+
 			public void onRequestFailure(AppaloosaException e) {
 				mUpdateStatus = UpdateStatus.INITIALIZED;
 				if (listener != null) {
 					listener.onRequestFailure(e);
 				}
-			}
-
-			@Override
-			public void onRequestSuccess(ApplicationCheckUpdate applicatonCheckUpdate) {
-				if (applicatonCheckUpdate.isUpdateNeeded()) {
-					if (showConfirmationDialog) {
-						Log.d(TAG_APPALOOSA, "Show install confirm dialog");
-						showConfirmationDialog(context, storeId, storeToken, applicatonCheckUpdate.getId(), applicatonCheckUpdate.getDownloadUrl(), dialogTitleResourceId, dialogMessageResourceId, listener);
-					}
-					else {
-						downloadAndInstallApplication(context, storeId, storeToken, applicatonCheckUpdate.getId(), applicatonCheckUpdate.getDownloadUrl(), listener);
-					}
-				}				
 			}
 		});
 	}
@@ -186,42 +189,83 @@ public class Appaloosa {
 			throw new IllegalArgumentException("context should not be null");
 		}
 
-		String packageName = SystemUtils.getApplicationPackage(context);
-		int currentVersion = 0;
-		try {
-			currentVersion = SystemUtils.getApplicationVersionCode(context);
-			Log.d(TAG_APPALOOSA, "Installed application version: " + currentVersion);
-		}
-		catch (NameNotFoundException e) {
-			listener.onRequestFailure(new ApplicationInformationException("Unable to get current application version", e));
-		}
-		String deviceId = DeviceInfo.getDeviceId(context);
-		String encryptedDeviceId = Base64.encodeToString(deviceId.getBytes(), Base64.DEFAULT);
-		
-		if (!mSpiceManager.isStarted()) {
-			mSpiceManager.start(context);
-		}
-		mUpdateStatus = UpdateStatus.GETTING_APPLICATION_INFO;
-		mSpiceManager.execute(new ApplicationCheckForUpdateRequest(packageName, currentVersion, storeId, storeToken, encryptedDeviceId), new ApplicationCheckForUpdateRequestListener() {
-			
+		// retrieve Appaloosa application information
+		getApplicationInformation(context, storeId, storeToken, new ApplicationInformationRequestListener() {
+
 			@Override
 			public void onRequestFailure(SpiceException spiceException) {
 				super.onRequestFailure(spiceException);
 				listener.onRequestFailure(new ApplicationInformationException(spiceException));
 				mUpdateStatus = UpdateStatus.INITIALIZED;
 			}
-			
+
 			@Override
-			public void onRequestSuccess(ApplicationCheckUpdate result) {
-				listener.onRequestSuccess(result);
+			public void onRequestSuccess(Application application) {
+				// get the available version of the application on Appaloosa
+				int versionAppaloosa = 0;
+				if (application == null) {
+					listener.onRequestFailure(new ApplicationInformationException("Application does not exist on Appaloosa"));
+				}
+				try {
+					versionAppaloosa = Integer.parseInt(application.getVersion());
+					Log.d(TAG_APPALOOSA, "application version on Appaloosa: " + versionAppaloosa);
+				}
+				catch (Exception e) {
+					listener.onRequestFailure(new ApplicationInformationException("Unable to get Appaloosa application version", e));
+				}
+
+				// get the current installed version of the application
+				int currentVersion = 0;
+				try {
+					currentVersion = SystemUtils.getApplicationVersionCode(context);
+					Log.d(TAG_APPALOOSA, "installed application version: " + currentVersion);
+				}
+				catch (NameNotFoundException e) {
+					listener.onRequestFailure(new ApplicationInformationException("Unable to get current application version", e));
+				}
+
+				if (versionAppaloosa == currentVersion) {
+					Log.i(TAG_APPALOOSA, "application is up to date, no need to update");
+				}
+				else {
+					Log.i(TAG_APPALOOSA, "application is not up to date, need to update");
+				}
+				// application is uptodate if version installed is the same as version on Appaloosa
+				listener.onRequestSuccess(versionAppaloosa == currentVersion, application.getId());
 			}
 		});
 	}
 
-	public void downloadAndInstallApplication(final Context context, final long storeId, final String storeToken, final long id, final String downloadUrl, final ApplicationUpdateListener listener) {
+	/**
+	 * This method retrieve Appaloosa informations about the current {@link Application} in which the SDK is used.<br/>
+	 * <i>This method should normally not be called directly by the application (used internally by {@link #isApplicationUpToDate} )</i><br/>
+	 * <br/>
+	 * <b>EXECUTED ASYNCHRONOUSLY (NOT IN UI THREAD)</b> : see <a href="https://github.com/octo-online/robospice">Robospice</a> library
+	 * 
+	 * @param context
+	 *            {@link Context} of the application
+	 * @param storeId
+	 *            the store identifier available in store settings on the console
+	 * @param storeToken
+	 *            the store token available in store settings on the console
+	 * @param listener
+	 *            the listener used to retrieve the application information. <br/>
+	 *            Since the method is asynchronous, use the {@link ApplicationInformationRequestListener} to retrieve the application information
+	 */
+	public void getApplicationInformation(Context context, long storeId, String storeToken, ApplicationInformationRequestListener listener) {
+		String packageName = SystemUtils.getApplicationPackage(context);
+
+		if (!mSpiceManager.isStarted()) {
+			mSpiceManager.start(context);
+		}
+		mUpdateStatus = UpdateStatus.GETTING_APPLICATION_INFO;
+		mSpiceManager.execute(new ApplicationInformationRequest(packageName, storeId, storeToken), listener);
+	}
+
+	public void downloadAndInstallApplication(final Context context, final long storeId, final String storeToken, final long id, final ApplicationUpdateListener listener) {
 		updateListener(listener);
 
-		downloadApplicaton(context, storeId, storeToken, id, downloadUrl, new ApplicationDownloadRequestListener() {
+		downloadApplicaton(context, storeId, storeToken, id, new ApplicationDownloadRequestListener() {
 
 			@Override
 			public void onRequestSuccess(InputStream result) {
@@ -270,14 +314,29 @@ public class Appaloosa {
 	 *            the listener used to retrieve the stream of the binary<br />
 	 *            Since the method is asynchronous, use the {@link ApplicationDownloadRequestListener} to get the result of the download
 	 */
-	public void downloadApplicaton(final Context context, final long storeId, String storeToken, final long applicationId, final String downloadUrl, final ApplicationDownloadRequestListener listener) {
+	public void downloadApplicaton(final Context context, final long storeId, String storeToken, final long applicationId, final ApplicationDownloadRequestListener listener) {
 		if (!mSpiceManager.isStarted()) {
 			mSpiceManager.start(context);
 		}
 
 		mUpdateStatus = UpdateStatus.GETTING_APPLICATION_BINARY_URL;
-		Log.d(TAG_APPALOOSA, "APK download url=" + downloadUrl);
-		downloadApplicatonBinary(context, downloadUrl, storeId, applicationId, listener);
+		// Indeed, this method retrieve the download URL and delegate to downloadApplicationBinary method if succeed
+		ApplicationBinaryUrlRequest request = new ApplicationBinaryUrlRequest(storeId, applicationId, storeToken);
+		mSpiceManager.execute(request, new RequestListener<DownloadUrl>() {
+
+			public void onRequestFailure(SpiceException spiceException) {
+				mUpdateStatus = UpdateStatus.INITIALIZED;
+				if (listener != null) {
+					listener.onRequestFailure(spiceException);
+				}
+			}
+
+			public void onRequestSuccess(DownloadUrl result) {
+				Log.d(TAG_APPALOOSA, "APK download url=" + result.getDownloadUrl());
+				downloadApplicatonBinary(context, result.getDownloadUrl(), storeId, applicationId, listener);
+			}
+
+		});
 	}
 
 	/**
@@ -464,7 +523,7 @@ public class Appaloosa {
 		return apk;
 	}
 
-	private void showConfirmationDialog(final Context context, final long storeId, final String storeToken, final long applicationId, final String downloadUrl, int dialogTitleResourceId, int dialogMessageResourceId,
+	private void showConfirmationDialog(final Context context, final long storeId, final String storeToken, final long applicationId, int dialogTitleResourceId, int dialogMessageResourceId,
 			final ApplicationUpdateListener listener) {
 		String title = (dialogTitleResourceId == 0 ? UPDATE_DIALOG_TITLE : context.getString(dialogTitleResourceId));
 		String message = (dialogMessageResourceId == 0 ? UPDATE_DIALOG_MESSAGE : context.getString(dialogMessageResourceId));
@@ -475,7 +534,7 @@ public class Appaloosa {
 		alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				downloadAndInstallApplication(context, storeId, storeToken, applicationId, downloadUrl, listener);
+				downloadAndInstallApplication(context, storeId, storeToken, applicationId, listener);
 				dialog.cancel();
 			}
 
