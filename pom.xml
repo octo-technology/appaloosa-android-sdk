@@ -12,7 +12,7 @@
 	<artifactId>appaloosa-android-sdk</artifactId>
 	<packaging>aar</packaging>
 	<name>Appaloosa - SDK</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
     <description>Android SDK for appaloosa-store</description>
     <url>http://appaloosa-store.com</url>
     <licenses>

@@ -7,8 +7,6 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 
-import com.octo.appaloosasdk.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
