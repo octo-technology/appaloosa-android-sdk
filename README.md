@@ -17,16 +17,17 @@ Installation
 
 If you use maven or any other tool with dependency management, add the following dependency :
 
-       <dependency>
-		<groupId>com.appaloosa-store</groupId>
-	        <artifactId>appaloosa-android-sdk</artifactId>
-	        <version>1.0.4</version>
-		<type>apklib</type>
-	</dependency>
+       	<dependency>
+			<groupId>com.appaloosa-store</groupId>
+			<artifactId>appaloosa-android-sdk</artifactId>
+			<type>aar</type>
+			<version>1.0.3-SNAPSHOT</version>
+		</dependency>
 
-Since the component is not on maven central, you will need to install the dependency first:
+Since the component is not on maven central, you can find the aar file in the target/ folder.
+You will need to install the dependency:
 
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=com.appaloosa-store -DartifactId=appaloosa-sdk -Dversion=1.0.4 -Dpackaging=apklib
+    mvn install:install-file -Dfile=appaloosa-android-sdk-1.0.3-SNAPSHOT.aar -DpomFile=pom.xml -DgroupId=com.appaloosa-store -DartifactId=appaloosa-android-sdk -Dversion=1.0.3-SNAPSHOT -Dpackaging=aar
 
 ### Non Maven way
 
