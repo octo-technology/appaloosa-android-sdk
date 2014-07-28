@@ -29,7 +29,10 @@ release.properties
 .iml
 
 #Maven project files
-target/
+target/*
+
+#But not the generated aar
+!target/*.aar
 
 #Maven release files
 *.releaseBackup
