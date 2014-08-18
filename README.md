@@ -21,7 +21,7 @@ If you use maven or any other tool with dependency management, add the following
 			<groupId>com.appaloosa-store</groupId>
 			<artifactId>appaloosa-android-sdk</artifactId>
 			<type>aar</type>
-			<version>1.0.3-SNAPSHOT</version>
+			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 
 Since the component is not on maven central, you can find the aar file in the target/ folder.

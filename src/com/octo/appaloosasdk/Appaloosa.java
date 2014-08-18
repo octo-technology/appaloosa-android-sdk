@@ -120,9 +120,11 @@ public class Appaloosa {
 
 		if (mUpdateStatus.getValue() > UpdateStatus.INITIALIZED.getValue())
 			return;
+		
+		final String imei = DeviceInfo.getDeviceId(context);
 
 		// Verify the version of the application
-		checkForUpdate(context, storeId, storeToken, new ApplicationUpToDateListener() {
+		checkForUpdate(context, storeId, storeToken, imei, new ApplicationUpToDateListener() {
 
 			public void onRequestSuccess(boolean isUpToDate, final long id) {
 				// if this is not the latest version, download and install it
@@ -130,10 +132,10 @@ public class Appaloosa {
 
 					if (showConfirmationDialog) {
 						Log.d(TAG_APPALOOSA, "Show install confirm dialog");
-						showConfirmationDialog(context, storeId, storeToken, id, dialogTitleResourceId, dialogMessageResourceId, listener);
+						showConfirmationDialog(context, storeId, storeToken, id, dialogTitleResourceId, dialogMessageResourceId, imei, listener);
 					}
 					else {
-						downloadAndInstallApplication(context, storeId, storeToken, id, listener);
+						downloadAndInstallApplication(context, storeId, storeToken, id, imei, listener);
 					}
 				}
 			}
@@ -180,7 +182,7 @@ public class Appaloosa {
 	 *            Since the method is asynchronous, use the {@link ApplicationUpToDateListener} to know if the version of the installed application is the same as the version on Appaloosa Store (true)
 	 *            and the application id to launch the download
 	 */
-	public void checkForUpdate(final Context context, long storeId, String storeToken, final ApplicationUpToDateListener listener) {
+	public void checkForUpdate(final Context context, long storeId, String storeToken, final String imei, final ApplicationUpToDateListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException("listener should not be null");
 		}
@@ -190,7 +192,7 @@ public class Appaloosa {
 		}
 
 		// retrieve Appaloosa application information
-		getApplicationInformation(context, storeId, storeToken, new ApplicationInformationRequestListener() {
+		getApplicationInformation(context, storeId, storeToken, imei, new ApplicationInformationRequestListener() {
 
 			@Override
 			public void onRequestFailure(SpiceException spiceException) {
@@ -252,20 +254,20 @@ public class Appaloosa {
 	 *            the listener used to retrieve the application information. <br/>
 	 *            Since the method is asynchronous, use the {@link ApplicationInformationRequestListener} to retrieve the application information
 	 */
-	public void getApplicationInformation(Context context, long storeId, String storeToken, ApplicationInformationRequestListener listener) {
+	public void getApplicationInformation(Context context, long storeId, String storeToken, final String imei, ApplicationInformationRequestListener listener) {
 		String packageName = SystemUtils.getApplicationPackage(context);
 
 		if (!mSpiceManager.isStarted()) {
 			mSpiceManager.start(context);
 		}
 		mUpdateStatus = UpdateStatus.GETTING_APPLICATION_INFO;
-		mSpiceManager.execute(new ApplicationInformationRequest(packageName, storeId, storeToken), listener);
+		mSpiceManager.execute(new ApplicationInformationRequest(packageName, storeId, storeToken, imei), listener);
 	}
 
-	public void downloadAndInstallApplication(final Context context, final long storeId, final String storeToken, final long id, final ApplicationUpdateListener listener) {
+	public void downloadAndInstallApplication(final Context context, final long storeId, final String storeToken, final long id, final String imei, final ApplicationUpdateListener listener) {
 		updateListener(listener);
 
-		downloadApplicaton(context, storeId, storeToken, id, new ApplicationDownloadRequestListener() {
+		downloadApplicaton(context, storeId, storeToken, id, imei, new ApplicationDownloadRequestListener() {
 
 			@Override
 			public void onRequestSuccess(InputStream result) {
@@ -314,14 +316,14 @@ public class Appaloosa {
 	 *            the listener used to retrieve the stream of the binary<br />
 	 *            Since the method is asynchronous, use the {@link ApplicationDownloadRequestListener} to get the result of the download
 	 */
-	public void downloadApplicaton(final Context context, final long storeId, String storeToken, final long applicationId, final ApplicationDownloadRequestListener listener) {
+	public void downloadApplicaton(final Context context, final long storeId, String storeToken, final long applicationId, final String imei, final ApplicationDownloadRequestListener listener) {
 		if (!mSpiceManager.isStarted()) {
 			mSpiceManager.start(context);
 		}
 
 		mUpdateStatus = UpdateStatus.GETTING_APPLICATION_BINARY_URL;
 		// Indeed, this method retrieve the download URL and delegate to downloadApplicationBinary method if succeed
-		ApplicationBinaryUrlRequest request = new ApplicationBinaryUrlRequest(storeId, applicationId, storeToken);
+		ApplicationBinaryUrlRequest request = new ApplicationBinaryUrlRequest(storeId, applicationId, storeToken, imei);
 		mSpiceManager.execute(request, new RequestListener<DownloadUrl>() {
 
 			public void onRequestFailure(SpiceException spiceException) {
@@ -524,7 +526,7 @@ public class Appaloosa {
 	}
 
 	private void showConfirmationDialog(final Context context, final long storeId, final String storeToken, final long applicationId, int dialogTitleResourceId, int dialogMessageResourceId,
-			final ApplicationUpdateListener listener) {
+			final String imei, final ApplicationUpdateListener listener) {
 		String title = (dialogTitleResourceId == 0 ? UPDATE_DIALOG_TITLE : context.getString(dialogTitleResourceId));
 		String message = (dialogMessageResourceId == 0 ? UPDATE_DIALOG_MESSAGE : context.getString(dialogMessageResourceId));
 
@@ -534,7 +536,7 @@ public class Appaloosa {
 		alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
-				downloadAndInstallApplication(context, storeId, storeToken, applicationId, listener);
+				downloadAndInstallApplication(context, storeId, storeToken, applicationId, imei, listener);
 				dialog.cancel();
 			}
 

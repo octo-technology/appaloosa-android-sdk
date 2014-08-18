@@ -15,17 +15,19 @@ public class ApplicationBinaryUrlRequest extends SpiceRequest<DownloadUrl> {
 	private long storeId;
 	private long applicationId;
 	private String storeToken;
+	private String imei;
 
-	public ApplicationBinaryUrlRequest(long storeId, long applicationId, String storeToken) {
+	public ApplicationBinaryUrlRequest(long storeId, long applicationId, String storeToken, String imei) {
 		super(DownloadUrl.class);
 		this.storeId = storeId;
 		this.applicationId = applicationId;
 		this.storeToken = storeToken;
+		this.imei = imei;
 	}
 
 	@Override
 	public DownloadUrl loadDataFromNetwork() throws Exception {
-		return WebServices.getInstance().getApplicationDownloadUrl(storeId, applicationId, storeToken);
+		return WebServices.getInstance().getApplicationDownloadUrl(storeId, applicationId, storeToken, imei);
 	}
 
 }

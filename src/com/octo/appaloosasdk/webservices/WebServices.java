@@ -45,8 +45,8 @@ public class WebServices {
 	}
 
 	public static interface Urls {
-		public static final String GET_APPLICATION_INFORMATION = "%1$d/mobile_applications/%2$s.json?token=%3$s";
-		public static final String GET_APPLICATION_BINARY = "%1$d/mobile_applications/%2$d/install?token=%3$s";
+		public static final String GET_APPLICATION_INFORMATION = "%1$d/mobile_applications/%2$s.json?token=%3$s&imei=%4$s";
+		public static final String GET_APPLICATION_BINARY = "%1$d/mobile_applications/%2$d/install?token=%3$s&imei=%4$s";
 		public static final String GET_APPLICATION_AUTHORIZATIONS = "%1$d/mobile_application_updates/is_authorized?token=%2$s&application_id=%3$s&device_id=%4$s&version=%5$d&locale=%6$s";
 	}
 
@@ -79,8 +79,8 @@ public class WebServices {
 	// ============================================================================================
 	// PUBLIC
 	// ============================================================================================
-	public Application getApplicationInformation(String packageName, long storeId, String storeToken) {
-		String URL = WEBSERVICES_BASE_URL + String.format(Urls.GET_APPLICATION_INFORMATION, storeId, packageName.replaceAll("\\.", "%2E"), storeToken);
+	public Application getApplicationInformation(String packageName, long storeId, String storeToken, String imei) {
+		String URL = WEBSERVICES_BASE_URL + String.format(Urls.GET_APPLICATION_INFORMATION, storeId, packageName.replaceAll("\\.", "%2E"), storeToken, imei);
 		Log.d(TAG_APPALOOSA, "Retrieve application informations from " + URL);
 		try {
 			return mRestTemplate.getForObject(new URI(URL), Application.class);
@@ -91,8 +91,8 @@ public class WebServices {
 		return null;
 	}
 
-	public DownloadUrl getApplicationDownloadUrl(long storeId, long applicationId, String storeToken) {
-		String URL = WebServices.WEBSERVICES_BASE_URL + String.format(WebServices.Urls.GET_APPLICATION_BINARY, storeId, applicationId, storeToken);
+	public DownloadUrl getApplicationDownloadUrl(long storeId, long applicationId, String storeToken, String imei) {
+		String URL = WebServices.WEBSERVICES_BASE_URL + String.format(WebServices.Urls.GET_APPLICATION_BINARY, storeId, applicationId, storeToken, imei);
 		Log.d(TAG_APPALOOSA, "Retrieve application binary url from " + URL);
 
 		DownloadUrl app = mRestTemplate.getForObject(URL, DownloadUrl.class);

@@ -15,16 +15,18 @@ public class ApplicationInformationRequest extends SpiceRequest<Application> {
 	private String mPackageName;
 	private long mStoreId;
 	private String mStoreToken;
+	private String mImei;
 
-	public ApplicationInformationRequest(String packageName, long storeId, String storeToken) {
+	public ApplicationInformationRequest(String packageName, long storeId, String storeToken, String imei) {
 		super(Application.class);
 		mPackageName = packageName;
 		mStoreId = storeId;
 		mStoreToken = storeToken;
+		mImei = imei;
 	}
 
 	@Override
 	public Application loadDataFromNetwork() throws Exception {
-		return WebServices.getInstance().getApplicationInformation(mPackageName, mStoreId, mStoreToken);
+		return WebServices.getInstance().getApplicationInformation(mPackageName, mStoreId, mStoreToken, mImei);
 	}
 }
