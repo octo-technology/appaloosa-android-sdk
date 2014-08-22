@@ -12,7 +12,7 @@
 	<artifactId>appaloosa-android-sdk</artifactId>
 	<packaging>aar</packaging>
 	<name>Appaloosa - SDK</name>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.0.4</version>
     <description>Android SDK for appaloosa-store</description>
     <url>http://appaloosa-store.com</url>
     <licenses>
@@ -105,6 +105,19 @@
 		<sourceDirectory>src/</sourceDirectory>
 		<plugins>
 			<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<version>3.9.0-rc.2</version>
@@ -164,6 +177,17 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.15</version>
+			</plugin>
+			<plugin>
+			  <groupId>org.sonatype.plugins</groupId>
+			  <artifactId>nexus-staging-maven-plugin</artifactId>
+			  <version>1.6.2</version>
+			  <extensions>true</extensions>
+			  <configuration>
+			     <serverId>sonatype-nexus-staging</serverId>
+			     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+			     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+			  </configuration>
 			</plugin>
 		</plugins>
 	</build>
