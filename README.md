@@ -21,30 +21,8 @@ If you use maven or any other tool with dependency management, add the following
 			<groupId>com.appaloosa-store</groupId>
 			<artifactId>appaloosa-android-sdk</artifactId>
 			<type>aar</type>
-			<version>1.0.4-SNAPSHOT</version>
+			<version>1.0.4</version>
 		</dependency>
-
-Since the component is not on maven central, you can find the aar file in the target/ folder.
-You will need to install the dependency:
-
-    mvn install:install-file -Dfile=appaloosa-android-sdk-1.0.3-SNAPSHOT.aar -DpomFile=pom.xml -DgroupId=com.appaloosa-store -DartifactId=appaloosa-android-sdk -Dversion=1.0.3-SNAPSHOT -Dpackaging=aar
-
-### Non Maven way
-
-If you don't use maven, simply import the sdk as a maven android project and set it as a library reference in your project properties.
-
-As the SDK is a maven project, it comes with some library dependency you may already have added in your project before. You will need to remove them to avoid duplicate jar errors.
-Here is the list of library dependency :
- - robospice-spring-android (1.4.5)
- - robospice (1.4.5)
- - robospice-cache (1.4.5)
- - commons-lang3 (3.1)
- - commons-io (1.3.2)
- - spring-android-rest-template (1.0.1)
- - spring-android-core (1.0.1)
- - jackson-mapper-asl (1.9.11)
- - jackson-core-asl (1.9.11)
- - support-v4-r7 ==> Warning : If you need to use a newer version (eg: r13), you need to exclude this one.
 
 ### With Eclipse
 
