@@ -1,3 +1,5 @@
+#### The Appaloosa Android SDK is deprecated as of July 1st 2015. Please use the [Appaloosa Android Tools](https://github.com/appaloosa-store/appaloosa-android-tools) from now on.
+
 SDK Appaloosa Android
 =====================
 
